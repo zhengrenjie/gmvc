@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-func (instance *DefaultDispatcher) resolve(c HTTPContext, meta *HandlerMeta) (interface{}, error) {
+func (instance *DefaultDispatcher) resolve(c HttpContext, meta *HandlerMeta) (interface{}, error) {
 	// 实例化handler
 	handlerValuePtr := reflect.New(meta.handlerType)
 
@@ -16,7 +16,7 @@ func (instance *DefaultDispatcher) resolve(c HTTPContext, meta *HandlerMeta) (in
 	return handlerValuePtr.Interface(), nil
 }
 
-func (instance *DefaultDispatcher) resolveAndCheckFieldValue(ctx HTTPContext, pvalue reflect.Value, meta *HandlerMeta) error {
+func (instance *DefaultDispatcher) resolveAndCheckFieldValue(ctx HttpContext, pvalue reflect.Value, meta *HandlerMeta) error {
 	for i := 0; i < meta.fieldNum; i++ {
 		fieldMeta := meta.fieldList[i]
 
@@ -108,7 +108,7 @@ func (instance *DefaultDispatcher) resolveAndCheckFieldValue(ctx HTTPContext, pv
 	return nil
 }
 
-func (instance *DefaultDispatcher) drawOutOriginValue(ctx HTTPContext, fieldMeta *ParamMeta) (originValue interface{}, src int, present bool) {
+func (instance *DefaultDispatcher) drawOutOriginValue(ctx HttpContext, fieldMeta *ParamMeta) (originValue interface{}, src int, present bool) {
 	if hasSourceTag(fieldMeta.source, HeaderSrc) {
 		src = HeaderSrc
 		originValue, present = ctx.GetHeader(fieldMeta.fieldName)
@@ -158,7 +158,7 @@ func (instance *DefaultDispatcher) drawOutOriginValue(ctx HTTPContext, fieldMeta
 	return
 }
 
-func (instance *DefaultDispatcher) validateValue(ctx HTTPContext, value interface{}, fieldMeta *ParamMeta, meta *HandlerMeta) error {
+func (instance *DefaultDispatcher) validateValue(ctx HttpContext, value interface{}, fieldMeta *ParamMeta, meta *HandlerMeta) error {
 	if len(fieldMeta.checkers) > 0 {
 		for _, checker := range fieldMeta.checkers {
 			if checker == nil {
@@ -175,7 +175,7 @@ func (instance *DefaultDispatcher) validateValue(ctx HTTPContext, value interfac
 }
 
 // 参数类型转换
-func (instance *DefaultDispatcher) resolveFieldValue(ctx HTTPContext, fieldMeta *ParamMeta, originValue string, handlerName string) interface{} {
+func (instance *DefaultDispatcher) resolveFieldValue(ctx HttpContext, fieldMeta *ParamMeta, originValue string, handlerName string) interface{} {
 	convert, ok := convertMap[fieldMeta.fieldType.Type.Kind()]
 	if ok {
 		value, err := convert(originValue, fieldMeta.fieldType.Type)

@@ -8,16 +8,16 @@ import (
 )
 
 // Validator 函数定义
-type Validator func(ctx HTTPContext, fieldMeta *ParamMeta, value interface{}) error
+type Validator func(ctx HttpContext, fieldMeta *ParamMeta, value interface{}) error
 
 // Resolver 自定义解析器
-type Resolver func(ctx HTTPContext, fieldMeta *ParamMeta, origin string) (interface{}, error)
+type Resolver func(ctx HttpContext, fieldMeta *ParamMeta, origin string) (interface{}, error)
 
 // HandleError error 全局处理器
-type HandleError func(ctx HTTPContext, err error) interface{}
+type HandleError func(ctx HttpContext, err error) interface{}
 
 // HandlerFunc 通用的HandlerFunc
-type HandlerFunc func(ctx HTTPContext)
+type HandlerFunc func(ctx HttpContext)
 
 // HandlerDispatcher 核心接口
 type HandlerDispatcher interface {
@@ -59,7 +59,7 @@ var (
 		checkerMap:  make(map[string]Validator, 0),
 		resolverMap: make(map[string]Resolver, 0),
 		responsor:   make(map[RenderType]Responsor, 0),
-		errHandler: func(ctx HTTPContext, err error) interface{} {
+		errHandler: func(ctx HttpContext, err error) interface{} {
 			return err.Error()
 		},
 	}
@@ -79,7 +79,7 @@ func init() {
 	DefaultInstance.RegisterResponsor(String, &StringResponsor{})
 
 	// 注册内置参数解析器
-	DefaultInstance.RegisterResolver("Json", func(ctx HTTPContext, fieldMeta *ParamMeta, origin string) (interface{}, error) {
+	DefaultInstance.RegisterResolver("Json", func(ctx HttpContext, fieldMeta *ParamMeta, origin string) (interface{}, error) {
 		switch fieldMeta.fieldType.Type.Kind() {
 		case reflect.Struct:
 			jsonFieldValue := reflect.New(fieldMeta.fieldType.Type)
@@ -153,7 +153,7 @@ func (instance *DefaultDispatcher) InnerWrap0(handlerType reflect.Type) HandlerF
 
 	handlerMeta := parser.introspect(handlerType)
 
-	return func(ctx HTTPContext) {
+	return func(ctx HttpContext) {
 		defer onRecover(ctx)
 
 		// 1. 解析参数
@@ -185,7 +185,7 @@ func (instance *DefaultDispatcher) InnerWrap0(handlerType reflect.Type) HandlerF
 	}
 }
 
-func (instance *DefaultDispatcher) initialize(ctx HTTPContext, handler interface{}) error {
+func (instance *DefaultDispatcher) initialize(ctx HttpContext, handler interface{}) error {
 	if initer, ok := handler.(Initer); ok {
 		return initer.Init()
 	}
@@ -193,7 +193,7 @@ func (instance *DefaultDispatcher) initialize(ctx HTTPContext, handler interface
 	return nil
 }
 
-func (instance *DefaultDispatcher) launch(ctx HTTPContext, handler interface{}) (interface{}, error) {
+func (instance *DefaultDispatcher) launch(ctx HttpContext, handler interface{}) (interface{}, error) {
 	if entity, ok := handler.(Action); ok {
 		return entity.Go()
 	}
@@ -202,7 +202,7 @@ func (instance *DefaultDispatcher) launch(ctx HTTPContext, handler interface{}) 
 	panic("handler is not implements 'gmvc.Action'.")
 }
 
-func (instance *DefaultDispatcher) doResponse(ctx HTTPContext, resp interface{}) {
+func (instance *DefaultDispatcher) doResponse(ctx HttpContext, resp interface{}) {
 	if entity, ok := resp.(Response); ok {
 		if responsor, ok := instance.responsor[entity.Render]; ok {
 			responsor.Response(ctx, &entity)
@@ -230,7 +230,7 @@ func (instance *DefaultDispatcher) doResponse(ctx HTTPContext, resp interface{})
 	})
 }
 
-func onRecover(c HTTPContext) {
+func onRecover(c HttpContext) {
 	if x := recover(); x != nil {
 		c.Status(http.StatusInternalServerError)
 	}

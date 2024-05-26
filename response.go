@@ -27,14 +27,14 @@ type Response struct {
 
 // Responsor 负责返回，可能会有多种Render
 type Responsor interface {
-	Response(ctx HTTPContext, resp *Response)
+	Response(ctx HttpContext, resp *Response)
 }
 
 // JSONResponsor Json实现
 type JSONResponsor struct{}
 
 // Response 返回的方法
-func (r *JSONResponsor) Response(ctx HTTPContext, resp *Response) {
+func (r *JSONResponsor) Response(ctx HttpContext, resp *Response) {
 	setDefault(resp)
 	setHeader(ctx, resp)
 	ctx.JSON(resp.StatusCode, resp.Body)
@@ -44,7 +44,7 @@ func (r *JSONResponsor) Response(ctx HTTPContext, resp *Response) {
 type HTMLResponsor struct{}
 
 // Response 返回的方法
-func (r *HTMLResponsor) Response(ctx HTTPContext, resp *Response) {
+func (r *HTMLResponsor) Response(ctx HttpContext, resp *Response) {
 	setDefault(resp)
 	setHeader(ctx, resp)
 	ctx.HTML(resp.Body.(string), resp.StatusCode, resp.Model)
@@ -54,7 +54,7 @@ func (r *HTMLResponsor) Response(ctx HTTPContext, resp *Response) {
 type StringResponsor struct{}
 
 // Response 返回的方法
-func (r *StringResponsor) Response(ctx HTTPContext, resp *Response) {
+func (r *StringResponsor) Response(ctx HttpContext, resp *Response) {
 	setDefault(resp)
 	setHeader(ctx, resp)
 	ctx.String(resp.StatusCode, resp.Body.(string))
@@ -66,7 +66,7 @@ func setDefault(resp *Response) {
 	}
 }
 
-func setHeader(ctx HTTPContext, resp *Response) {
+func setHeader(ctx HttpContext, resp *Response) {
 	if len(resp.Header) > 0 {
 		for k, v := range resp.Header {
 			ctx.Header(k, v)

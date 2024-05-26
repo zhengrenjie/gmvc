@@ -151,7 +151,7 @@ func (g *GinContext) String(code int, value string) {
 	g.ctx.String(code, value)
 }
 
-var _ HTTPContext = &GinContext{}
+var _ HttpContext = &GinContext{}
 
 type GinAdapter struct {
 	*DefaultDispatcher
