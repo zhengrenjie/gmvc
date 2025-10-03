@@ -64,29 +64,6 @@ func CreateGmvcBuilder(options ...GmvcOption) *GmvcBuilder {
 	return builder
 }
 
-// var _ IGmvcRoute = (*route)(nil)
-
-// type route struct {
-// 	methods []string
-// 	path    string
-// 	action  HandlerFunc
-// }
-
-// // Action implements IGmvcRoute.
-// func (r *route) Action() HandlerFunc {
-// 	return r.action
-// }
-
-// // Method implements IGmvcRoute.
-// func (r *route) Methods() []string {
-// 	return r.methods
-// }
-
-// // Path implements IGmvcRoute.
-// func (r *route) Path() string {
-// 	return r.path
-// }
-
 // GmvcBuilder 负责创建Gmvc实例
 type GmvcBuilder struct {
 	actions       map[string]HandlerFunc
@@ -529,9 +506,11 @@ func (gmvc *GmvcBuilder) resolveFieldValue(ctx GmvcContext, pvalue reflect.Value
 }
 
 func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *ParamMeta) (originValue interface{}, src Src, present bool) {
+	req := ctx.HttpRequest()
+
 	if hasSourceTag(fieldMeta.source, HeaderSrc) {
 		src = HeaderSrc
-		originValue, present = ctx.GetHeader(fieldMeta.fieldName)
+		originValue, present = req.Header().Get(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -539,7 +518,7 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, QuerySrc) {
 		src = QuerySrc
-		originValue, present = ctx.GetQuery(fieldMeta.fieldName)
+		originValue, present = req.GetQuery(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -547,7 +526,7 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, PathSrc) {
 		src = PathSrc
-		originValue, present = ctx.GetPathParam(fieldMeta.fieldName)
+		originValue, present = req.GetPathParam(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -555,7 +534,7 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, FormSrc) {
 		src = FormSrc
-		originValue, present = ctx.GetForm(fieldMeta.fieldName)
+		originValue, present = req.GetForm(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -563,8 +542,8 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, BodySrc) {
 		src = BodySrc
-		v, err := ctx.GetRawData()
-		present = err == nil || len(v) > 0
+		v := req.Body()
+		present = len(v) > 0
 		originValue = v
 		return
 	}
