@@ -1,22 +1,28 @@
 package gmvc
 
-import "net/http"
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"strings"
+)
 
 // RenderType 返回渲染类型
 type RenderType int32
 
 const (
-	// JSON response, content-type="application/json"
+	// JSON: content-type="application/json"
 	JSON RenderType = 0
 
-	// HTML 模版渲染, content-type="text/html"
+	// HTML: content-type="text/html"
 	HTML RenderType = 1
 
-	// String 返回
+	// String: content-type="text/plain"
 	String RenderType = 2
 )
 
-// Response HTTP返回结果结构体
+// Response is the convenient struct to return HTTP response.
+// By seting [RenderType], gmvc will use different responsor to return response.
 type Response struct {
 	StatusCode int
 	Body       interface{}
@@ -37,7 +43,16 @@ type JSONResponsor struct{}
 func (r *JSONResponsor) Response(ctx GmvcContext, resp *Response) {
 	setDefault(resp)
 	setHeader(ctx, resp)
-	ctx.JSON(resp.StatusCode, resp.Body)
+
+	b, err := json.Marshal(resp.Body)
+	if err != nil {
+		ctx.HttpResponse().Status(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.HttpResponse().SetHeader("Content-Type", "application/json")
+	ctx.HttpResponse().Status(resp.StatusCode)
+	ctx.HttpResponse().Body(bytes.NewReader(b))
 }
 
 // HTMLResponsor html实现
@@ -47,7 +62,7 @@ type HTMLResponsor struct{}
 func (r *HTMLResponsor) Response(ctx GmvcContext, resp *Response) {
 	setDefault(resp)
 	setHeader(ctx, resp)
-	ctx.HTML(resp.Body.(string), resp.StatusCode, resp.Model)
+	ctx.HttpResponse().HTML(resp.StatusCode, resp.Body.(string), resp.Model)
 }
 
 // StringResponsor string实现
@@ -57,19 +72,30 @@ type StringResponsor struct{}
 func (r *StringResponsor) Response(ctx GmvcContext, resp *Response) {
 	setDefault(resp)
 	setHeader(ctx, resp)
-	ctx.String(resp.StatusCode, resp.Body.(string))
+
+	ctx.HttpResponse().SetHeader("Content-Type", "text/plain")
+	ctx.HttpResponse().Status(resp.StatusCode)
+	ctx.HttpResponse().Body(strings.NewReader(resp.Body.(string)))
 }
+
+var _ Responsor = (*JSONResponsor)(nil)
+var _ Responsor = (*HTMLResponsor)(nil)
+var _ Responsor = (*StringResponsor)(nil)
 
 func setDefault(resp *Response) {
 	if resp.StatusCode == 0 {
-		resp.StatusCode = http.StatusOK
+		if resp.Body != nil {
+			resp.StatusCode = http.StatusOK
+		} else {
+			resp.StatusCode = http.StatusNoContent
+		}
 	}
 }
 
 func setHeader(ctx GmvcContext, resp *Response) {
 	if len(resp.Header) > 0 {
 		for k, v := range resp.Header {
-			ctx.Header(k, v)
+			ctx.HttpResponse().SetHeader(k, v)
 		}
 	}
 }

@@ -182,14 +182,3 @@ func (h *HertzContext) HTML(name string, code int, obj interface{}) {
 func (h *HertzContext) String(code int, value string) {
 	h.ctx.String(code, value)
 }
-
-func Wrap(handler gmvc.HandlerFunc) app.HandlerFunc {
-	return func(c context.Context, ctx *app.RequestContext) {
-		adapter := &HertzContext{
-			c:        c,
-			ctx:      ctx,
-			paramSet: make(map[string]interface{}, 0),
-		}
-		handler(adapter)
-	}
-}

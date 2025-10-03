@@ -236,12 +236,8 @@ func (gmvc *GmvcBuilder) BuildAction(action Action, midware ...IMiddleware) Hand
 
 			// 首先执行Before逻辑，请求可以被短路，只要返回任意结果就会提前结束，剩下的middleware和action都不会继续执行
 			ret, err := midware.Before(ctx)
-			if err != nil {
-				return nil, err
-			}
-
-			if ret != nil {
-				return ret, nil
+			if ret != nil || err != nil {
+				return ret, err
 			}
 
 			// 执行around逻辑
@@ -276,7 +272,7 @@ func (gmvc *GmvcBuilder) BuildAction(action Action, midware ...IMiddleware) Hand
 
 					gmvc.doResponse(ctx, ret)
 				} else {
-					ctx.Status(http.StatusInternalServerError)
+					ctx.HttpResponse().Status(http.StatusInternalServerError)
 				}
 			}
 		}()
@@ -300,7 +296,7 @@ func (gmvc *GmvcBuilder) Actions() map[string]HandlerFunc {
 }
 
 func (instance *GmvcBuilder) initialize(ctx GmvcContext, handler interface{}) error {
-	if initer, ok := handler.(Initer); ok {
+	if initer, ok := handler.(Initializer); ok {
 		return initer.Init()
 	}
 
@@ -317,8 +313,10 @@ func (instance *GmvcBuilder) launch(ctx GmvcContext, handler interface{}) (inter
 }
 
 func (gmvc *GmvcBuilder) doResponse(ctx GmvcContext, resp interface{}) {
-	/* if resp == nil, means gmvc no need do response for user */
+	// if resp is nil, means gmvc no need do response for user
 	if resp == nil {
+		// return 204 No Content
+		ctx.HttpResponse().Status(http.StatusNoContent)
 		return
 	}
 
@@ -326,7 +324,7 @@ func (gmvc *GmvcBuilder) doResponse(ctx GmvcContext, resp interface{}) {
 		if responsor, ok := gmvc.responsor[entity.Render]; ok {
 			responsor.Response(ctx, &entity)
 		} else {
-			ctx.Status(http.StatusInternalServerError)
+			ctx.HttpResponse().Status(http.StatusInternalServerError)
 		}
 
 		return
@@ -336,7 +334,7 @@ func (gmvc *GmvcBuilder) doResponse(ctx GmvcContext, resp interface{}) {
 		if responsor, ok := gmvc.responsor[entity.Render]; ok {
 			responsor.Response(ctx, entity)
 		} else {
-			ctx.Status(http.StatusInternalServerError)
+			ctx.HttpResponse().Status(http.StatusInternalServerError)
 		}
 
 		return

@@ -30,7 +30,7 @@ func (adapter *hertzReqAdapter) Host() string {
 	return string(adapter.hertzReq.Host())
 }
 
-func (adapter *hertzReqAdapter) FormValue(key string) (string, bool) {
+func (adapter *hertzReqAdapter) GetFormValue(key string) (string, bool) {
 	if value, ok := adapter.hertzCtx.GetQuery(key); ok {
 		return value, ok
 	}
