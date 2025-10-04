@@ -242,13 +242,6 @@ func (gmvc *GmvcBuilder) BuildAction(action Action, midware ...IMiddleware) Hand
 
 			// 执行around逻辑
 			ret, err = midware.Around(ctx, curnext)
-			// if err != nil {
-			// 	return nil, err
-			// }
-
-			// if ret != nil {
-			// 	return ret, nil
-			// }
 
 			// 最后执行after逻辑
 			return midware.After(ctx, ret, err)

@@ -30,7 +30,8 @@ type IMiddleware interface {
 	// If any argument of return is not nil, the whole action return.
 	Around(ctx GmvcContext, next Next) (interface{}, error)
 
-	// IsApply 动态判断是否执行当前middleware
+	// IsApply determines whether the middleware should be applied to the current request.
+	// If it returns false, the middleware will be skipped.
 	IsApply(ctx GmvcContext) bool
 }
 
