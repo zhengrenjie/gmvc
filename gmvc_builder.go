@@ -64,29 +64,6 @@ func CreateGmvcBuilder(options ...GmvcOption) *GmvcBuilder {
 	return builder
 }
 
-// var _ IGmvcRoute = (*route)(nil)
-
-// type route struct {
-// 	methods []string
-// 	path    string
-// 	action  HandlerFunc
-// }
-
-// // Action implements IGmvcRoute.
-// func (r *route) Action() HandlerFunc {
-// 	return r.action
-// }
-
-// // Method implements IGmvcRoute.
-// func (r *route) Methods() []string {
-// 	return r.methods
-// }
-
-// // Path implements IGmvcRoute.
-// func (r *route) Path() string {
-// 	return r.path
-// }
-
 // GmvcBuilder 负责创建Gmvc实例
 type GmvcBuilder struct {
 	actions       map[string]HandlerFunc
@@ -259,23 +236,12 @@ func (gmvc *GmvcBuilder) BuildAction(action Action, midware ...IMiddleware) Hand
 
 			// 首先执行Before逻辑，请求可以被短路，只要返回任意结果就会提前结束，剩下的middleware和action都不会继续执行
 			ret, err := midware.Before(ctx)
-			if err != nil {
-				return nil, err
-			}
-
-			if ret != nil {
-				return ret, nil
+			if ret != nil || err != nil {
+				return ret, err
 			}
 
 			// 执行around逻辑
 			ret, err = midware.Around(ctx, curnext)
-			// if err != nil {
-			// 	return nil, err
-			// }
-
-			// if ret != nil {
-			// 	return ret, nil
-			// }
 
 			// 最后执行after逻辑
 			return midware.After(ctx, ret, err)
@@ -299,7 +265,7 @@ func (gmvc *GmvcBuilder) BuildAction(action Action, midware ...IMiddleware) Hand
 
 					gmvc.doResponse(ctx, ret)
 				} else {
-					ctx.Status(http.StatusInternalServerError)
+					ctx.HttpResponse().Status(http.StatusInternalServerError)
 				}
 			}
 		}()
@@ -323,7 +289,7 @@ func (gmvc *GmvcBuilder) Actions() map[string]HandlerFunc {
 }
 
 func (instance *GmvcBuilder) initialize(ctx GmvcContext, handler interface{}) error {
-	if initer, ok := handler.(Initer); ok {
+	if initer, ok := handler.(Initializer); ok {
 		return initer.Init()
 	}
 
@@ -340,8 +306,10 @@ func (instance *GmvcBuilder) launch(ctx GmvcContext, handler interface{}) (inter
 }
 
 func (gmvc *GmvcBuilder) doResponse(ctx GmvcContext, resp interface{}) {
-	/* if resp == nil, means gmvc no need do response for user */
+	// if resp is nil, means gmvc no need do response for user
 	if resp == nil {
+		// return 204 No Content
+		ctx.HttpResponse().Status(http.StatusNoContent)
 		return
 	}
 
@@ -349,7 +317,7 @@ func (gmvc *GmvcBuilder) doResponse(ctx GmvcContext, resp interface{}) {
 		if responsor, ok := gmvc.responsor[entity.Render]; ok {
 			responsor.Response(ctx, &entity)
 		} else {
-			ctx.Status(http.StatusInternalServerError)
+			ctx.HttpResponse().Status(http.StatusInternalServerError)
 		}
 
 		return
@@ -359,7 +327,7 @@ func (gmvc *GmvcBuilder) doResponse(ctx GmvcContext, resp interface{}) {
 		if responsor, ok := gmvc.responsor[entity.Render]; ok {
 			responsor.Response(ctx, entity)
 		} else {
-			ctx.Status(http.StatusInternalServerError)
+			ctx.HttpResponse().Status(http.StatusInternalServerError)
 		}
 
 		return
@@ -529,9 +497,11 @@ func (gmvc *GmvcBuilder) resolveFieldValue(ctx GmvcContext, pvalue reflect.Value
 }
 
 func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *ParamMeta) (originValue interface{}, src Src, present bool) {
+	req := ctx.HttpRequest()
+
 	if hasSourceTag(fieldMeta.source, HeaderSrc) {
 		src = HeaderSrc
-		originValue, present = ctx.GetHeader(fieldMeta.fieldName)
+		originValue, present = req.Header().Get(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -539,7 +509,7 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, QuerySrc) {
 		src = QuerySrc
-		originValue, present = ctx.GetQuery(fieldMeta.fieldName)
+		originValue, present = req.GetQuery(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -547,7 +517,7 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, PathSrc) {
 		src = PathSrc
-		originValue, present = ctx.GetPathParam(fieldMeta.fieldName)
+		originValue, present = req.GetPathParam(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -555,7 +525,7 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, FormSrc) {
 		src = FormSrc
-		originValue, present = ctx.GetForm(fieldMeta.fieldName)
+		originValue, present = req.GetForm(fieldMeta.fieldName)
 		if present {
 			return
 		}
@@ -563,8 +533,8 @@ func (instance *GmvcBuilder) drawOutOriginValue(ctx GmvcContext, fieldMeta *Para
 
 	if hasSourceTag(fieldMeta.source, BodySrc) {
 		src = BodySrc
-		v, err := ctx.GetRawData()
-		present = err == nil || len(v) > 0
+		v := req.Body()
+		present = len(v) > 0
 		originValue = v
 		return
 	}

@@ -8,30 +8,30 @@ import (
 type Next func(ctx GmvcContext) (interface{}, error)
 
 // IMiddleware defines the interface of gmvc middleware.
-// Only using one of Before&After methods or Around method is sugguested as Around can fully cover Before&After‘s functionality.
-// When you only want to do something before OR after Action, use Before (After) method.
-// When you need to do something before AND after Action at the same time, use Around method.
+// It is sugguested to use only Before&After methods or Around method  as Around can fully cover Before&After‘s functionality.
+// When you only want to do something before OR after the Action, use Before (After) method.
+// When you need to do something before AND after the Action at the same time, use Around method.
 // If you used the three methods in the same time, the invoking order will be: Before -> Around -> After,
 // which will confuse you somethime when you couldn't figure out what exactlly the excution order it is.
 type IMiddleware interface {
-	// Before
+
+	// Before:
 	// Invoking before the following middleware (if exist) and action's excution.
 	// If any argument of return is not nil, the whole action return.
 	Before(ctx GmvcContext) (interface{}, error)
 
-	// After
-	// 在一个Action执行后执行
-	// 入参是前面执行得到的result和err
-	// 返回是更新后（或者没有更新）的result和err
+	// After:
+	// Invoking after the preceding middleware (if exist) and action's excution.
+	// If any argument of return is not nil, the whole action return.
 	After(ctx GmvcContext, result interface{}, err error) (interface{}, error)
 
-	// Around
-	// 在一个Action前后分别执行一些动作
-	// 调用next(ctx)执行后续的步骤，通过next(ctx)获得后续执行的结果
-	// Next会执行后续所有的Middleware和Action需要执行的步骤，并返回前面所有执行后的返回结果
+	// Around:
+	// Invoking before and after the preceding middleware (if exist) and action's excution.
+	// If any argument of return is not nil, the whole action return.
 	Around(ctx GmvcContext, next Next) (interface{}, error)
 
-	// IsApply 动态判断是否执行当前middleware
+	// IsApply determines whether the middleware should be applied to the current request.
+	// If it returns false, the middleware will be skipped.
 	IsApply(ctx GmvcContext) bool
 }
 

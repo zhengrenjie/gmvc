@@ -1,6 +1,8 @@
 package gmvc_hertz
 
 import (
+	"context"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/zhengrenjie/gmvc"
 )
@@ -17,5 +19,16 @@ func CreateGmvc4HertzBuilder() *Gmvc4HertzBuilder {
 	builder := gmvc.CreateGmvcBuilder(gmvc.DefineAuto(gmvc.QuerySrc, gmvc.FormSrc))
 	return &Gmvc4HertzBuilder{
 		GmvcBuilder: builder,
+	}
+}
+
+func Wrap(handler gmvc.HandlerFunc) app.HandlerFunc {
+	return func(c context.Context, ctx *app.RequestContext) {
+		adapter := &HertzContext{
+			c:        c,
+			ctx:      ctx,
+			paramSet: make(map[string]interface{}, 0),
+		}
+		handler(adapter)
 	}
 }
