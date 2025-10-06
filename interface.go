@@ -144,11 +144,11 @@ type Action interface {
 	Go() (interface{}, error)
 }
 
-// Validator is the validator function.
+// Checker is the validator function.
 // It will be invoked after the parameters are resolved.
 // If the validator returns an error, the request will be aborted and the error will be returned to the client.
 // Any error during gmvc runtime will be catched by [HandleError].
-type Validator func(ctx GmvcContext, fieldMeta *ParamMeta, value interface{}) error
+type Checker func(ctx GmvcContext, fieldMeta *ParamMeta, value interface{}) error
 
 // Resolver is the custom resolver function.
 // It will be invoked after the parameters are parsed from the protocol.

@@ -62,7 +62,7 @@ type ParamMeta struct {
 	handlerMeta *ActionMeta
 
 	// Validators
-	checkers []Validator
+	checkers []Checker
 
 	// Resolver
 	resolver Resolver
@@ -99,7 +99,7 @@ func (meta ParamMeta) GetResolver() Resolver {
 	return meta.resolver
 }
 
-func (meta ParamMeta) GetValidators() []Validator {
+func (meta ParamMeta) GetValidators() []Checker {
 	return meta.checkers
 }
 
