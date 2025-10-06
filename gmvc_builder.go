@@ -16,7 +16,7 @@ var (
 func CreateGmvcBuilder(options ...GmvcOption) *GmvcBuilder {
 	builder := &GmvcBuilder{
 		actions:       make(map[string]HandlerFunc),
-		checkerMap:    make(map[string]Validator),
+		checkerMap:    make(map[string]Checker),
 		resolverMap:   make(map[string]Resolver),
 		typedResolver: make(map[reflect.Type]Resolver),
 		responsor:     make(map[RenderType]Responsor),
@@ -67,7 +67,7 @@ func CreateGmvcBuilder(options ...GmvcOption) *GmvcBuilder {
 // GmvcBuilder 负责创建Gmvc实例
 type GmvcBuilder struct {
 	actions       map[string]HandlerFunc
-	checkerMap    map[string]Validator
+	checkerMap    map[string]Checker
 	resolverMap   map[string]Resolver
 	typedResolver map[reflect.Type]Resolver
 	responsor     map[RenderType]Responsor
@@ -90,7 +90,7 @@ func (gmvc *GmvcBuilder) RegisterRecover(recover RecoverFunc) *GmvcBuilder {
 }
 
 // RegisterValidator 注册全局参数验证器
-func (gmvc *GmvcBuilder) RegisterValidator(name string, c Validator) *GmvcBuilder {
+func (gmvc *GmvcBuilder) RegisterValidator(name string, c Checker) *GmvcBuilder {
 	gmvc.checkerMap[name] = c
 	return gmvc
 }
@@ -657,7 +657,7 @@ func (instance *GmvcBuilder) introspect(v reflect.Value) *ActionMeta {
 		validatorStr, ok := tagInfo.Lookup(XValidator)
 		if ok {
 			xValidator := strings.Split(validatorStr, XSplit)
-			checkers := make([]Validator, len(xValidator))
+			checkers := make([]Checker, len(xValidator))
 			fieldMeta.checkers = checkers
 			for index, value := range xValidator {
 				if value == "" {
