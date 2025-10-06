@@ -24,11 +24,7 @@ func CreateGmvc4HertzBuilder() *Gmvc4HertzBuilder {
 
 func Wrap(handler gmvc.HandlerFunc) app.HandlerFunc {
 	return func(c context.Context, ctx *app.RequestContext) {
-		adapter := &HertzContext{
-			c:        c,
-			ctx:      ctx,
-			paramSet: make(map[string]interface{}, 0),
-		}
+		adapter := AcquireHertzContext(c, ctx)
 		handler(adapter)
 	}
 }
