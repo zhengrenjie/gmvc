@@ -1,10 +1,10 @@
 module github.com/zhengrenjie/gmvc/adapter/hertz
 
-go 1.21
+go 1.18
 
 require (
 	github.com/cloudwego/hertz v0.8.0
-	github.com/zhengrenjie/gmvc v1.0.0
+	github.com/zhengrenjie/gmvc v0.0.1
 )
 
 require (
