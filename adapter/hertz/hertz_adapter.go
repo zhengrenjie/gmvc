@@ -251,12 +251,22 @@ type (
 
 // Get implements gmvc.Header.
 func (h *hertzRespHeaderAdapter) Get(key string) (string, bool) {
-	return h.header.Get(key), true
+	value := h.header.Get(key)
+	if len(value) == 0 {
+		return "", false
+	}
+
+	return string(value), true
 }
 
 // Gets implements gmvc.Header.
 func (h *hertzRespHeaderAdapter) Gets(key string) ([]string, bool) {
-	return h.header.GetAll(key), true
+	values := h.header.GetAll(key)
+	if len(values) == 0 {
+		return nil, false
+	}
+
+	return values, true
 }
 
 // VisitAll implements gmvc.Header.
@@ -291,12 +301,22 @@ func (h *hertzRespAdapter) Status(code int) {
 
 // Get implements gmvc.Header.
 func (h *hertzReqHeaderAdapter) Get(key string) (string, bool) {
-	return h.header.Get(key), true
+	value := h.header.Get(key)
+	if len(value) == 0 {
+		return "", false
+	}
+
+	return string(value), true
 }
 
 // Gets implements gmvc.Header.
 func (h *hertzReqHeaderAdapter) Gets(key string) ([]string, bool) {
-	return h.header.GetAll(key), true
+	values := h.header.GetAll(key)
+	if len(values) == 0 {
+		return nil, false
+	}
+
+	return values, true
 }
 
 // VisitAll implements gmvc.Header.

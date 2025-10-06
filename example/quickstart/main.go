@@ -11,8 +11,8 @@ import (
 type ExampleAction struct {
 	Ctx context.Context
 
-	Name string `param"Auto"`
-	Age  int    `param"Auto"`
+	Name string `param:"Auto"`
+	Age  int    `param:"Auto"`
 }
 
 func (a *ExampleAction) Go() (any, error) {

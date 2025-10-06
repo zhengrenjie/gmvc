@@ -4,7 +4,7 @@ go 1.24.2
 
 require (
 	github.com/cloudwego/hertz v0.10.2
-	github.com/zhengrenjie/gmvc/adapter/hertz v0.0.1
+	github.com/zhengrenjie/gmvc/adapter/hertz v0.0.2
 )
 
 require (
