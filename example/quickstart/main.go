@@ -16,7 +16,13 @@ type ExampleAction struct {
 }
 
 func (a *ExampleAction) Go() (any, error) {
-	return nil, nil
+	return struct {
+		Name string `json:"name"`
+		Age  int    `json:"age"`
+	}{
+		Name: a.Name,
+		Age:  a.Age,
+	}, nil
 }
 
 func main() {

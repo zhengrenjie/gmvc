@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/cloudwego/hertz v0.8.0
-	github.com/zhengrenjie/gmvc v0.0.0
+	github.com/zhengrenjie/gmvc v1.0.0
 )
 
 require (
@@ -26,5 +26,3 @@ require (
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
-
-replace github.com/zhengrenjie/gmvc => ../..

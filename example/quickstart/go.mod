@@ -2,7 +2,10 @@ module github.com/zhengrenjie/gmvc/example/quickstart
 
 go 1.24.2
 
-require github.com/cloudwego/hertz v0.10.2
+require (
+	github.com/cloudwego/hertz v0.10.2
+	github.com/zhengrenjie/gmvc/adapter/hertz v0.0.0-20251004040402-b232f9531ca2
+)
 
 require (
 	github.com/bytedance/gopkg v0.1.1 // indirect
@@ -31,7 +34,6 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/zhengrenjie/gmvc v1.0.0 // indirect
-	github.com/zhengrenjie/gmvc/adapter/hertz v0.0.0-20251004040402-b232f9531ca2 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
