@@ -22,6 +22,8 @@ go get github.com/zhengrenjie/gmvc
 
 ## Getting Started
 
+> [Document: QuickStart](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/1-QuickStart.md)
+
 Let's start with a simplest example:
 
 First, define an gmvc action named `ExampleAction`.
