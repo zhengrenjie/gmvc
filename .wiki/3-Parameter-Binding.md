@@ -2,6 +2,8 @@
 
 I believe you have already got some idea from the previous section of how parameter binding works in gmvc. Actually, the parameter binding happens before the `Resolver` in gmvc. In this section, we will discuss the details of parameter binding.
 
+Parameter Binding, more specifically, how gmvc finds parameters from HTTP request mapping to the Action fields. Notice the binding process only find the native string value from the HTTP request, **but not** convert or resolver or set the value into Action's field.
+
 First, a parameter binding rule is defined as follows:
 
 - If the field must have a `param` tag, otherwise the value will be ignored.
@@ -18,7 +20,17 @@ The three parts does not have any order.
 
 ### Location Tag
 
-These are some examples:
+| Location Tag | Description |
+| ----------- | ----------- |
+| `Query`  | Get parameter from HTTP Query. |
+| `Path`   | Get parameter from HTTP Path. |
+| `Form`   | Get parameter from HTTP Form. |
+| `Body`   | Get parameter from HTTP Body. |
+| `Header` | Get parameter from HTTP Header. |
+| `Ctx`    | Get parameter from HTTP Context. |
+| `Auto`   | Auto lookup the **FIRST** parameter from HTTP Header, Query, Path, Form, Body, Ctx **IN ORDER**. |
+
+Here are some examples:
 
 - `param:"Query"`
 - `param:"Query,X-Real-Ip"`
