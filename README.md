@@ -75,6 +75,9 @@ Ok, that's all. Now, if you visit `/hello?name=gmvc&age=18` (in **Hertz**, the p
 }
 ```
 
-For more detailed documentation, please refer to the [wiki](https://github.com/zhengrenjie/gmvc/wiki).
+For more detailed documentation, please refer to the [wiki](https://github.com/zhengrenjie/gmvc/tree/main/.wiki).
+
+1. [QuickStart](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/1-QuickStart.md)
+2. [Resolver](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/2-Resolver.md)
 
 
