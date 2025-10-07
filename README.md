@@ -22,7 +22,59 @@ go get github.com/zhengrenjie/gmvc
 
 ## Getting Started
 
-To get started with Gmvc, check out the [quickstart guide](https://github.com/zhengrenjie/gmvc/blob/main/example/quickstart/main.go).
+Let's start with a simplest example:
+
+First, let's define an gmvc action named `ExampleAction`.
+
+
+```go
+
+// ExampleAction is a gmvc action.
+type ExampleAction struct {
+	Ctx context.Context
+
+	Name string `param:"Auto"`
+	Age  int    `param:"Auto"`
+}
+
+func (a *ExampleAction) Go() (any, error) {
+	return struct {
+		Name string `json:"name"`
+		Age  int    `json:"age"`
+	}{
+		Name: a.Name,
+		Age:  a.Age,
+	}, nil
+}
+```
+
+And Then, let's register this action into the gmvc. In this case, we use **Hertz** as the underlying web framework.
+
+```go
+func main() {
+	// 1. create an gmvc builder
+	builder := gmvc_hertz.CreateGmvc4HertzBuilder()
+
+	// 2. create a hertz server
+	h := server.Default()
+
+	// 3. wrap an gmvc action to hertz handler
+	h.GET("/hello", builder.Wrap(&ExampleAction{}))
+
+	// 4. start the server
+	h.Spin()
+}
+```
+
+Ok, that's all. Now, if you visit `/hello?name=gmvc&age=18` (in **Hertz**, the port will be `8888` by default), you will get the following response:
+
+```json
+{
+	"name": "gmvc",
+	"age": 18
+}
+```
+
 For more detailed documentation, please refer to the [wiki](https://github.com/zhengrenjie/gmvc/wiki).
 
 

@@ -1,4 +1,4 @@
-# QuickStart
+## QuickStart
 
 Let's start with a simplest example:
 
@@ -56,7 +56,7 @@ Ok, that's all. Now, if you visit `/hello?name=gmvc&age=18` (in **Hertz**, the p
 
 What happens here?
 
-First, we define an action `ExampleAction` with two parameters `Name` and `Age` (actually it's three, but we don't discuss `Ctx` here), and a method `Go`. In gmvc, you need to use `param:""` tag to indicate which parameter should be bind from the HTTP request. The `Auto` means gmvc will bind the parameter automatically without indicating **from where** (e.g. query, path, form, etc.). That will be useful when you need to support one parameter in multiple ways.
+First, we define an action `ExampleAction` with two parameters `Name` and `Age` (actually it's three, but we don't discuss `Ctx` here), and a method `Go`. In gmvc, you need to use `param:""` tag to indicate which parameter should be bind from the HTTP request. The `Auto` means gmvc will bind the parameter automatically without indicating **from where** (e.g. query, path, form, etc.). That will be useful when you need to support one parameter in multiple ways. The field name like `Name` will be used as the key to get the real value from HTTP request.
 
 And then, in `ExampleAction` you should provider `Go` method, with the method signature `func Go() (any, error)`. This method make sure the `ExampleAction` has implemented the [gmvc.Action](https://github.com/zhengrenjie/gmvc/blob/main/interface.go#L143) interface. Gmvc will test it, when you try to register this action into the gmvc it will check if the action implements the interface, to make sure it wouldn't startup if there are any violations. In the runtime, when the HTTP request comes in, gmvc will create an instance of `ExampleAction` and bind the parameters from the request via gmvc tags, then call `Go` method to get the response.
 
