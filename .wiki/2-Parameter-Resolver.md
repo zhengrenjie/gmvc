@@ -187,3 +187,7 @@ builder.RegisterResolver("MyResolver", MyResolver)
 ```
 
 The first parameter is the resolver name, which you can use in the `resolver` tag. The second parameter is the resolver function.
+
+## What's next?
+
+- [Parameter Binding](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/3-Parameter-Binding.md)

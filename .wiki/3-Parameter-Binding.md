@@ -67,3 +67,7 @@ type ExampleAction struct {
     Page Page `param:"Recursive"`
 }
 ```
+
+## What's next?
+
+- [Response Render](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/4-Response-Render.md)
