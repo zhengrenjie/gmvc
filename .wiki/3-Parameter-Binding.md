@@ -85,7 +85,7 @@ type ExampleAction struct {
 }
 ```
 
-Notice, the default value will only be set when there is not such Key `PageSize`, in this case, in HTTP Query. If the key exist even with empty value, like "/?PageSize=", the default value will not be set.
+Notice, the default value will only be set when there is not such Key `PageSize`, in this case, in HTTP Query. If the key exist even with empty value, like `/?PageSize=`, the default value will not be set.
 
 **Strictly speaking**, `default` tag is an `Resolver` function, as it is to set the value into the Action, instead of get value from HTTP parameter. But I still find it is more clear to discuss it here.
 

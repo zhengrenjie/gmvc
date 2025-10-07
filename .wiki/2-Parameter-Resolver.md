@@ -1,5 +1,7 @@
 ## Parameter Resolver
 
+This chapter will discuss how to use the parameter resolver in gmvc and how it works.
+
 ### Primary Type Resolver
 
 Gmvc has built-in primary type resolver.
