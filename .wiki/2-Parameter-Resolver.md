@@ -1,4 +1,6 @@
-## Primary Type Resolver
+## Parameter Resolver
+
+### Primary Type Resolver
 
 Gmvc has built-in primary type resolver.
 
@@ -56,9 +58,9 @@ And the following values to `false`:
 
 For `Array` type, the built-in resolver will split the value by comma `,` and then convert each item to the corresponding type.
 
-## Built-in Struct Resolver
+### Built-in Struct Resolver
 
-### Json Resolver
+#### Json Resolver
 
 Gmvc has one built-in struct resolver named `Json`.
 
@@ -88,7 +90,7 @@ You might ask where does gmvc get the origin value from. The answer is it is det
 
 Also, in this case, the `User` parameter also takes `*User`. For `Array`, as we use `Json` resolver, it will just use `json.Unmarshal` to resolver the array type, instead of spliting the value by comma `,`, which only works for the primary-type resolver.
 
-### Context Resolver
+#### Context Resolver
 
 You may have noticed that in every (almost) examples, there is a parameter named `Ctx`. It is always recommended to add it to your Action. 
 
@@ -105,7 +107,7 @@ If you only want to do some processing control, like timeout controlling, or log
 You should use `hertz.RequestContext` or any certain underlying web framework's context only when you really need it. Or you are coupling your business logic with a certain underlying web framework.
 
 
-## Custom Resolver
+### Custom Resolver
 
 Also you can define your own resolver, in case you want to resolve the value in a special way. You can do like this:
 
@@ -157,9 +159,9 @@ func main() {
 
 ```
 
-In this case, you define a custom resolver named `MyResolver`. It will unmarshal the JSON string to `User` struct. And then, it will add `1` to the age.
+In this case, you define a custom resolver named `MyResolver`. It will unmarshal the JSON string to `User` struct and then add `1` to the `Age`.
 
-### Resolver Definition
+#### Resolver Definition
 
 The `Resolver` function is define like:
 
@@ -169,8 +171,8 @@ type Resolver func(ctx gmvc.GmvcContext, fieldMeta *gmvc.ParamMeta, origin strin
 
 The three parameters of `Resolver` function are:
 
-- `ctx`: the gmvc context, you can get the whole HTTP context from it.
-- `fieldMeta`: the metadata of the Action field, you can get reflect info from it.
+- `ctx`: the gmvc context, you can get the origin HTTP context from it.
+- `fieldMeta`: the metadata of the Action field, you can get the reflecting info from it.
 - `origin`: the origin value got from HTTP parameter.
 
 The return value of `Resolver` function is:
@@ -178,7 +180,7 @@ The return value of `Resolver` function is:
 - `interface{}`: the resolved value, **it must be exactly the same type as the field** (eg.if the field in Action is pointer type, the resolved value must be pointer type as well).
 - `error`: the error occurred during the resolution.
 
-### Resolver Registration
+#### Resolver Registration
 
 After you define your resolver, you need to register it to gmvc. You can do like this:
 

@@ -1,6 +1,6 @@
 ## Parameter Binding
 
-I believe you have already got some idea of parameter binding from the previous section. Actually, the parameter binding happens before the `Resolver` in gmvc. In this section, we will discuss the details of parameter binding.
+I believe you have already got some idea from the previous section of how parameter binding works in gmvc. Actually, the parameter binding happens before the `Resolver` in gmvc. In this section, we will discuss the details of parameter binding.
 
 First, a parameter binding rule is defined as follows:
 
@@ -16,6 +16,8 @@ The `param` tag formats as: `param:"<Location>,<Name>,<RecursiveMark>"`.
 
 The three parts does not have any order.
 
+### Location Tag
+
 These are some examples:
 
 - `param:"Query"`
@@ -28,9 +30,9 @@ These are some examples:
 - `param:"Ctx,Name"`
 - `param:"Auto,Name"`
 
-In most cases, `Auto` is enough. But when you want to bind a parameter in a specific location, or when you start to care about the order of how `Auto` lookup the parameter, you should not use `Auto`.
+In most cases, `Auto` is enough. But when you want to bind a parameter in a specific location, or when you start to care about the order of how `Auto` lookups the parameter, you should not use `Auto`.
 
-### Rename
+### Rename Tag
 
 Sometimes you must need to rename the parameter, eg. when you want to get Header from HTTP (because in most cases, the HTTP Header key is not a valid Go identifier).
 
@@ -46,7 +48,7 @@ type ExampleAction struct {
 }
 ```
 
-### Recursive
+### Recursive Tag
 
 Sometimes you may want to group some parameters together, or you have some common parameter pairs for all over the Actions. In those cases, you may need `Recursive` mark.
 
@@ -67,6 +69,27 @@ type ExampleAction struct {
     Page Page `param:"Recursive"`
 }
 ```
+
+### Default Value Tag
+
+You can set a default value for a parameter by using `default` tag.
+
+Example:
+
+```go
+// ExampleAction is a gmvc action.
+type ExampleAction struct {
+	Ctx context.Context
+
+    PageSize int `param:"Query" default:"10"`
+}
+```
+
+Notice, the default value will only be set when there is not such Key `PageSize`, in this case, in HTTP Query. If the key exist even with empty value, like "/?PageSize=", the default value will not be set.
+
+**Strictly speaking**, `default` tag is an `Resolver` function, as it is to set the value into the Action, instead of get value from HTTP parameter. But I still find it is more clear to discuss it here.
+
+You might have got some ideas of the **"Life Cycle"** in gmvc right? The parameter binding happens before the `Resolver`. We will disscuss this later.
 
 ## What's next?
 
