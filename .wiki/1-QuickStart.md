@@ -44,7 +44,7 @@ func main() {
 }
 ```
 
-Ok, that's all. Now, if you visit `/hello?name=gmvc&age=18` (in **Hertz**, the port will be `8888` by default), you will get the following response:
+Ok, that's all. Now, if you visit `/hello?Name=gmvc&Age=18` (in **Hertz**, the port will be `8888` by default), you will get the following response:
 
 ```json
 {

@@ -24,7 +24,7 @@ go get github.com/zhengrenjie/gmvc
 
 Let's start with a simplest example:
 
-First, let's define an gmvc action named `ExampleAction`.
+First, define an gmvc action named `ExampleAction`.
 
 
 ```go
@@ -48,7 +48,7 @@ func (a *ExampleAction) Go() (any, error) {
 }
 ```
 
-And Then, let's register this action into the gmvc. In this case, we use **Hertz** as the underlying web framework.
+And Then, register this action into the gmvc. In this case, we use **Hertz** as the underlying web framework.
 
 ```go
 func main() {
@@ -58,7 +58,7 @@ func main() {
 	// 2. create a hertz server
 	h := server.Default()
 
-	// 3. wrap an gmvc action to hertz handler
+	// 3. wrap the gmvc action to hertz handler
 	h.GET("/hello", builder.Wrap(&ExampleAction{}))
 
 	// 4. start the server
@@ -66,7 +66,7 @@ func main() {
 }
 ```
 
-Ok, that's all. Now, if you visit `/hello?name=gmvc&age=18` (in **Hertz**, the port will be `8888` by default), you will get the following response:
+Ok, that's all. Now, if you visit `http://127.0.0.1:8888/hello?Name=gmvc&Age=18`, you will get the following response:
 
 ```json
 {
