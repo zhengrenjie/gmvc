@@ -58,6 +58,8 @@ For `Array` type, the built-in resolver will split the value by comma `,` and th
 
 ## Built-in Struct Resolver
 
+### Json Resolver
+
 Gmvc has one built-in struct resolver named `Json`.
 
 ```go
@@ -85,6 +87,23 @@ Notice, the `Json` resolver does not mean that it will take `application/json` a
 You might ask where does gmvc get the origin value from. The answer is it is determined by the `param` tag. In the above example, we use `param:"Auto"` to let gmvc get the value from multiple place of HTTP text.
 
 Also, in this case, the `User` parameter also takes `*User`. For `Array`, as we use `Json` resolver, it will just use `json.Unmarshal` to resolver the array type, instead of spliting the value by comma `,`, which only works for the primary-type resolver.
+
+### Context Resolver
+
+You may have noticed that in every (almost) examples, there is a parameter named `Ctx`. It is always recommended to add it to your Action. 
+
+You can have three types of context:
+
+- `context.Context`
+- `gmvc.GmvcContext`
+- `hertz.RequestContext` or other underlying web framework's context.
+
+If you want to use the origin HTTP context, it is recommended to use `gmvc.GmvcContext`, where you can get ride of the underlying web framework's context and make your business logic more clear and decoupled with any certain underlying web framework.
+
+If you only want to do some processing control, like timeout controlling, or logging & tracing , you just need `context.Context`.
+
+You should use `hertz.RequestContext` or any certain underlying web framework's context only when you really need it. Or you are coupling your business logic with a certain underlying web framework.
+
 
 ## Custom Resolver
 

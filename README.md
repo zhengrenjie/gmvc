@@ -75,9 +75,12 @@ Ok, that's all. Now, if you visit `http://127.0.0.1:8888/hello?Name=gmvc&Age=18`
 }
 ```
 
+## Documentation
+
 For more detailed documentation, please refer to the [wiki](https://github.com/zhengrenjie/gmvc/tree/main/.wiki).
 
 1. [QuickStart](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/1-QuickStart.md)
-2. [Resolver](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/2-Resolver.md)
+2. [Parameter Resolver](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/2-Resolver.md)
+3. [Parameter Binding](https://github.com/zhengrenjie/gmvc/tree/main/.wiki/3-Parameter.md)
 
 
